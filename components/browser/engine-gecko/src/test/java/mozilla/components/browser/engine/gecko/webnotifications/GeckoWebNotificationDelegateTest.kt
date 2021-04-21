@@ -14,27 +14,32 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-import org.mozilla.geckoview.MockWebNotification
+import org.mockito.Mockito.`when` as mockitoWhen
 import org.mozilla.geckoview.WebNotification as GeckoViewWebNotification
 
 @RunWith(AndroidJUnit4::class)
 class GeckoWebNotificationDelegateTest {
 
+    private fun createWebNotificationMock() : GeckoViewWebNotification {
+        val geckoViewWebNotification = mock(GeckoViewWebNotification::class.java)
+        mockitoWhen(geckoViewWebNotification.title).thenReturn("title")
+        mockitoWhen(geckoViewWebNotification.tag).thenReturn("tag")
+        mockitoWhen(geckoViewWebNotification.text).thenReturn("text")
+        mockitoWhen(geckoViewWebNotification.imageUrl).thenReturn("imageUrl")
+        mockitoWhen(geckoViewWebNotification.textDirection).thenReturn("textDirection")
+        mockitoWhen(geckoViewWebNotification.lang).thenReturn("lang")
+        mockitoWhen(geckoViewWebNotification.requireInteraction).thenReturn(true)
+        mockitoWhen(geckoViewWebNotification.source).thenReturn("source")
+        return geckoViewWebNotification
+    }
+
     @Test
     fun `onShowNotification is forwarded to delegate`() {
         val webNotificationDelegate: WebNotificationDelegate = mock()
-        val geckoViewWebNotification: GeckoViewWebNotification = MockWebNotification(
-            title = "title",
-            tag = "tag",
-            cookie = "cookie",
-            text = "text",
-            imageUrl = "imageUrl",
-            textDirection = "textDirection",
-            lang = "lang",
-            requireInteraction = true,
-            source = "source"
-        )
+        val geckoViewWebNotification = createWebNotificationMock()
+
         val geckoWebNotificationDelegate = GeckoWebNotificationDelegate(webNotificationDelegate)
 
         val notificationCaptor = argumentCaptor<WebNotification>()
@@ -56,17 +61,8 @@ class GeckoWebNotificationDelegateTest {
     @Test
     fun `onCloseNotification is forwarded to delegate`() {
         val webNotificationDelegate: WebNotificationDelegate = mock()
-        val geckoViewWebNotification: GeckoViewWebNotification = MockWebNotification(
-            title = "title",
-            tag = "tag",
-            cookie = "cookie",
-            text = "text",
-            imageUrl = "imageUrl",
-            textDirection = "textDirection",
-            lang = "lang",
-            requireInteraction = true,
-            source = "source"
-        )
+        val geckoViewWebNotification = createWebNotificationMock()
+
         val geckoWebNotificationDelegate = GeckoWebNotificationDelegate(webNotificationDelegate)
 
         val notificationCaptor = argumentCaptor<WebNotification>()
@@ -87,17 +83,8 @@ class GeckoWebNotificationDelegateTest {
     @Test
     fun `notification without a source are from web extensions`() {
         val webNotificationDelegate: WebNotificationDelegate = mock()
-        val geckoViewWebNotification: GeckoViewWebNotification = MockWebNotification(
-            title = "title",
-            tag = "tag",
-            cookie = "cookie",
-            text = "text",
-            imageUrl = "imageUrl",
-            textDirection = "textDirection",
-            lang = "lang",
-            requireInteraction = true,
-            source = ""
-        )
+        val geckoViewWebNotification = createWebNotificationMock()
+
         val geckoWebNotificationDelegate = GeckoWebNotificationDelegate(webNotificationDelegate)
 
         val notificationCaptor = argumentCaptor<WebNotification>()
